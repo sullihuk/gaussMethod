@@ -4,19 +4,41 @@
 #define row 5
 #define column 6
 
+float checkerZero (float system[row][column])
+{
+	float sistema;
+
+		for (size_t i=0; i<row; i++)
+		{
+			for(size_t j=0; j<column; j++)
+			{
+				if (i==j && system[i][j]==0)
+				{
+					system[i][j] += system[i+1][j]*(-1);
+				
+				}
+
+			}
+
+		}
+		return 
+		
+}
+			
 void gaussMethod (float system[row][column])
 {
-	for (size_t i=0; i!=row; i++)
+
+	float x, y, z, p, q, free;
+	size_t i;
+	size_t j;
+	float *hold;
+
+	for (size_t i=0; i<row; i++)
 	{
 		printf("string[%d] ", i+1);
 		for (size_t j=0; j<column; j++)
 		{
-			if (i==j && rate[i][j]==0)
-			{
-				hold = rate[i];
-				rate[i] = rate[i+1];
-				rate[i+1]=hold;
-			}
+			
 		}
 	}
 }
@@ -30,29 +52,32 @@ int main ()
 		{-3, -1, 1, 5, 2, -2}, 
 		{2, 6, 5, -2, 0, 37}
 	};
-	float x, y, z, p, q, free;
 	
-	float *hold;
-	
-	float sumFunc(float x, float y, float z, float p, float q, float free)
+
+	for (size_t i=0; i<row; i++)
 	{
-		if rate[0][0] == 0
-
+		printf("string[%d] ", i+1);
+		for (size_t j=0; j<column; j++)
+		{
+			if (rate[i][j] ==0 && i==j)
+			{ printf(" [%.2f]",rate[i][j]);
+			}	else {
+			printf(" %.2f ",rate[i][j]);
+			}
+		}
+		puts("");
 	}
-	size_t i;
-	size_t j;
-
+	puts("");	
 	for (size_t i=0; i!=row; i++)
 	{
 		printf("string[%d] ", i+1);
 		for (size_t j=0; j<column; j++)
 		{
-			printf(" %.2f ",rate[i][j]);
+			printf(" %.2f ",checkerZero(rate));
 		}
 		puts("");
 	}
-	
-		
+	printf(" %.2f ", checkerZero(rate));	
 }
 	
 	
