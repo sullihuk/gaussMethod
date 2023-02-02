@@ -4,9 +4,23 @@
 #define row 5
 #define column 6
 
-float checkerZero (float system[row][column])
+void adder (float system[row][column])
 {
-	float sistema;
+	for(size_t i=0; i<row; i++)
+	{
+		for(size_t j=0; j<column; j++)
+		{
+			system[i][j] += system[i+1][j]*(-1);
+			if (i==row-1)
+			{
+				system[i][j] += system[i-1][j]*(-1);
+			}
+		}
+	}
+}
+
+void checkerZero (float system[row][column])
+{
 
 		for (size_t i=0; i<row; i++)
 		{
@@ -14,14 +28,12 @@ float checkerZero (float system[row][column])
 			{
 				if (i==j && system[i][j]==0)
 				{
-					system[i][j] += system[i+1][j]*(-1);
-				
+						
 				}
 
 			}
 
 		}
-		return 
 		
 }
 			
@@ -68,16 +80,17 @@ int main ()
 		puts("");
 	}
 	puts("");	
+	adder(rate);
 	for (size_t i=0; i!=row; i++)
 	{
 		printf("string[%d] ", i+1);
 		for (size_t j=0; j<column; j++)
 		{
-			printf(" %.2f ",checkerZero(rate));
+			printf(" %.2f ",rate[i][j]);
 		}
 		puts("");
 	}
-	printf(" %.2f ", checkerZero(rate));	
+	// printf(" %.2f ", rate[row][column]);	
 }
 	
 	
