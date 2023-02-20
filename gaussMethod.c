@@ -72,8 +72,15 @@ void gaussMethod (float system[row][column])
 
 		for (size_t j=0; j<column; j++)
 		{
-			system[i][j] = system[i-1][j] - system[i][j]/system[
 			
+			if(i==j)
+			{
+				break;}
+			else
+			{
+				system[i][j] = system[i-1][j] - (system[i][j]/system[i][j+1])*system[i-1][j+1];
+			system[i][column-1]=system[i-1][column-1]-(system[i-1][column-1]/system[i][j+1])*system[i-1][j+1];
+			}	
 		}
 	}
 }
