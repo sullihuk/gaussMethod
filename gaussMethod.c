@@ -58,12 +58,13 @@ void gaussMethod (float system[row][column])
 	float x, y, z, p, q, free;
 	size_t i;
 	size_t j;
-	
-	float a11 = system[0][0];
+	float a11=system[0][0];
+	float held[column];
+
 	for (size_t j=0; j<column; j++)
 
 		{
-			system[0][j] /= a11;
+			system[0][j] = system[0][j]/a11;
 			
 		}
 
@@ -73,30 +74,30 @@ void gaussMethod (float system[row][column])
 		for (size_t j=0; j<column; j++)
 		{
 			
-			if(i==j)
-			{
-				break;}
-			else
-			{
-				system[i][j] = system[i-1][j] - (system[i][j]/system[i][j+1])*system[i-1][j+1];
-			system[i][column-1]=system[i-1][column-1]-(system[i-1][column-1]/system[i][j+1])*system[i-1][j+1];
-			}	
+				held[j]=system[i][j];
+				system[i][j] = held[j]-system[i-1][j]*held[i-1];
 		}
 	}
 }
 
 void printer (float system[row][column])
-{
+
+{	
+
+	puts("");
 	for (size_t i=0; i<row; i++)
 	{
 		printf("string[%d] ", i+1);
 		for (size_t j=0; j<column; j++)
 		{
+			if (system[i][j] ==0 && i==j)
+			{ printf(" [%.2f]",system[i][j]);
+			}	else {
 			printf(" %.2f ",system[i][j]);
+			}
 		}
 		puts("");
 	}
-	puts("");
 }
 
 int main ()
@@ -110,27 +111,11 @@ int main ()
 	};
 	
 
-	for (size_t i=0; i<row; i++)
-	{
-		printf("string[%d] ", i+1);
-		for (size_t j=0; j<column; j++)
-		{
-			if (rate[i][j] ==0 && i==j)
-			{ printf(" [%.2f]",rate[i][j]);
-			}	else {
-			printf(" %.2f ",rate[i][j]);
-			}
-		}
-		puts("");
-	}
-	puts("");	
-	//adder(rate);
-
+	
+	printer(rate);
 	checkerZero(rate);
 	printer(rate);
 	gaussMethod(rate);
-	printf("%f", rate[0][0]);
-	puts("");
 	printer(rate);
 	
 }
