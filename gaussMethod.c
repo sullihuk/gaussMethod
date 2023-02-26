@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #define row 5
-#define column 6
+#define column row+1
 
 /* Экспериментальный метод
 void adder (float system[row][column])
@@ -43,45 +43,44 @@ void checkerZero (float system[row][column]) // Метод избавляетс�
 						}
 						
 					}
-						
-				
-
 			}
-
 		}
-		
 }
 			
 void gaussMethod (float system[row][column])
 {
+	float x, y, z, p, q;
+	float unvar[row]={x, y, z, p, q}; //Инициализация массива искомых переменных.
+	float chval; // Инициализация переменной для замены частного коэффициентов. 
+	size_t i,j,k; //Инициализация переменных-счетчиков: количество строк, столбцов расширенной матрицы, количество шагов исключения переменных соответственно.
 
-	float x, y, z, p, q, free;
-	size_t i;
-	size_t j;
-	float a11=system[0][0];
-	float held[column];
-	size_t k=0;
 
-	for (size_t j=0; j<column; j++)
+	for (size_t i=1; j<=row-1; i++)
+	{
 
-		{
-			system[0][j] = system[0][j]/a11;
-			
+		for (size_t j=i+1; j<=row; j++)
+		{	
+			if(i>j)
+			{
+				chval=system[j][i]/system[i][i];
+				for (k=1; k<=row+1; k++)
+				{
+					system[j][k]=system[j][k]-chval*system[i][k];
+				}
+			}
 		}
+	}
 
-	for (size_t i=0; i<row; i++)
-	{	
-		
-		float auxi[column];
-		for (size_t j=k+1; j<column; j++)
+unvar[row]=system[row][row+1]/system[row][row];
+
+	for(size_t i=row-1; i>=1; i--)
+	{
+		unvar[i] = system[i][row+1];
+		for(j=i+1; j<=row; j++)
 		{
-			auxi[j] = system[k][j] - (system[k][j]/system[k][k])*system[i][k];
-			/*if (i+1==j)
-			{break;}
-			system[i+1][j]=0;*/
-			system[k][j] = auxi[j];
+			unvar[i] -= system[i][j]*unvar[j];
 		}
-
+		unvar[i] /= system[i][i];
 	}
 }
 
