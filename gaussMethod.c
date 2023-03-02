@@ -132,12 +132,12 @@ float chval; // Инициализация переменной для заме�
 
 	
 	printer(rate);
-	//checkerZero(rate);
-	//printer(rate);
+	checkerZero(rate);
+	printer(rate);
 
 	//gaussMethod(rate);
 	//printer(rate);
 	
 }
-	
+	https://www.geeksforgeeks.org/gaussian-elimination/
 	
