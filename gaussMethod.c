@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <math.h>
 #define row 5
-//#define column row+1
 
 /* Экспериментальный метод
 void adder (float system[row][column])
@@ -20,7 +19,7 @@ void adder (float system[row][column])
 	}
 }
 */ 
-
+void gaussMethod (float system[row][row+1]);
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
 {
 
@@ -51,22 +50,23 @@ void gaussMethod (float system[row][row+1])
 {
 	float x, y, z, p, q;
 	float unvar[row]={x, y, z, p, q}; //Инициализация массива искомых переменных.
-	float chval; // Инициализация переменной для замены частного коэффициентов. 
-	size_t i,j,k; //Инициализация переменных-счетчиков: количество строк, столбцов расширенной матрицы, количество шагов исключения переменных соответственно.
+	//float chval; // Инициализация переменной для замены частного коэффициентов. 
+	//size_t i,j,k; //Инициализация переменных-счетчиков: количество строк, столбцов расширенной матрицы, количество шагов исключения переменных соответственно.
 
 
-	for (size_t i=1; j<=row-1; i++)
+	for (int k=0; k<row; k++)
 	{
 
-		for (size_t j=i+1; j<=row; j++)
+		for (int i=k+1; i<row; i++)
 		{	
 		
-			chval=system[j][i]/system[i][i];
-			for (size_t k=1; k<=row+1; k++)
-			{
-				system[j][k] -= chval*system[i][k];
-			}
+			float chval = system[i][k]/system[k][k];
+			for (int j=k+1; j<=row; j++)
+			
+				system[i][j] -= system[i][j]*chval;
+			
 		
+			system[i][k]=0;
 		}
 	}
 
@@ -112,32 +112,14 @@ int main ()
 		{-3, -1, 1, 5, 2, -2}, 
 		{2, 6, 5, -2, 0, 37}
 	};
-float chval; // Инициализация переменной для замены частного коэффициентов. 
-	size_t i,j,k; //Инициализация переменных-счетчиков: количество строк, столбцов расширенной матрицы, количество шагов исключения переменных соответственно.
 
-	for (size_t i=1; j<=row-1; i++)
-	{
-
-		for (size_t j=i+1; j<=row; j++)
-		{	
-		
-			chval=rate[j][i]/rate[i][i];
-			for (size_t k=1; k<=row+1; k++)
-			{
-				rate[j][k] -= chval*rate[i][k];
-			}
-		
-		}
-	}
 
 	
 	printer(rate);
 	checkerZero(rate);
 	printer(rate);
-
-	//gaussMethod(rate);
-	//printer(rate);
+	gaussMethod(rate);
+	printer(rate);
 	
 }
-	https://www.geeksforgeeks.org/gaussian-elimination/
 	
