@@ -1,26 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#define row 5
+#define row 5 //Установка константы количества уравнений/переменных в системе
 
-/* Экспериментальный метод
-void adder (float system[row][column])
-{
-	for(size_t i=0; i<row; i++)
-	{
-		for(size_t j=0; j<column; j++)
-		{
-			system[i][j] += system[i+1][j]*(-1);
-			if (i==row-1)
-			{
-				system[i][j] += system[i-1][j]*(-1);
-			}
-		}
-	}
-}
-*/ 
-void gaussMethod (float system[row][row+1]);
-void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
+void beTriangleMatrix (double system[row][row+1]); // Инициализация метода, который приводит матрицу к треугольному виду
+void checkerZero (double system[row][row+1]);
+void reverseSubs (double system[row][row+1]);
+
+void checkerZero (double system[row][row+1]) // Метод избавляется от нулей на осевых элементах
 {
 
 		for (size_t i=0; i<row; i++) // Цикл пробегает по всем уравнениям системы
@@ -46,44 +33,52 @@ void checkerZero (float system[row][row+1]) // Метод избавляется
 		}
 }
 			
-void gaussMethod (float system[row][row+1])
+void beTriangleMatrix (double system[row][row+1])
 {
-	float x, y, z, p, q;
-	float unvar[row]={x, y, z, p, q}; //Инициализация массива искомых переменных.
-	//float chval; // Инициализация переменной для замены частного коэффициентов. 
+	char message[] = "Приведение матрицы системы уравнений к треугольному виду";
+		double chval; // Инициализация переменной для замены частного коэффициентов. 
 	//size_t i,j,k; //Инициализация переменных-счетчиков: количество строк, столбцов расширенной матрицы, количество шагов исключения переменных соответственно.
 
 
-	for (int k=0; k<row; k++)
+	for (size_t k=0; k<row; k++)// Цикл назначает номер шага исключения переменной
 	{
 
-		for (int i=k+1; i<row; i++)
+		for (size_t i=k+1; i<row; i++)// Цикл пробегает по всем уравнениям системы, при том, что номер уравнения системы равен номеру шага исключения увеличенного на единицу, т.е. следующего
+
 		{	
 		
-			float chval = system[i][k]/system[k][k];
-			for (int j=k+1; j<=row; j++)
+			double chval = system[i][k]/system[k][k];//Вспомогательная переменная назначается как результат деления коэффициента следующего уравнения на соответсвующий коэффициент текущего уравнения 
+			for (size_t j=k+1; j<=row; j++)// Цикл пробегает по всем коэффициентам текущего уравнения(строки)
 			
-				system[i][j] -= system[i][j]*chval;
-			
+				system[i][j] -= system[k][j]*chval;// Каждый последующий коэффициент уравнения равен разнице между соответствующим коэффициентом на предыдущим шаге и коэффициентом на текущем шаге помноженным на вспомогательную переменную значение которой описано при ее назначении см. соответствующий комментарий
 		
-			system[i][k]=0;
+			system[i][k]=0;// Коэффициенты не учавствующие в последующем расчете приравниваются к нулю
 		}
 	}
-
-/*unvar[row]=system[row][row+1]/system[row][row];
-
-	for(size_t i=row-1; i>=1; i--)
-	{
-		unvar[i] = system[i][row+1];
-		for(j=i+1; j<=row; j++)
-		{
-			unvar[i] -= system[i][j]*unvar[j];
-		}
-		unvar[i] /= system[i][i];
-	}*/
 }
 
-void printer (float system[row][row+1])
+void reverseSubs (double system[row][row+1])
+{	
+	double unvar[row]; //Инициализация массива значений искомых переменных.
+	char solution[]="xyzpq"; //Инициализация массива искомых переменных.
+	//unvar[row]=system[row][row+1]/system[row][row]; // Посдле приведениея матрицы к треугольному виду напрямую назначается значение последней переменной (решение уравнения с одной переменной)
+
+		for(int i=row-1; i>=0; i--) // Цикл решает систему уравнений методом обратной подстановки опираясь на значение последней переменной назначенной ранее
+		{
+			unvar[i] = system[i][row];// Назначение неизвестной переменной с номером, который соответсвует номеру уравнения (счет уравнений ведется снизу вверх, что следует из названия метода)
+			for(int j=i+1; j<row; j++)
+			{	
+				unvar[i] -= system[i][j]*unvar[j];
+			}	
+			unvar[i] /= system[i][i];
+		}
+		
+		printf("Solution of the system is: \n");
+		for(int i=0; i<row; i++)
+			printf("%c = %.2f\n", solution[i], unvar[i]);
+}
+
+void printer (double system[row][row+1])
 
 {	
 
@@ -104,8 +99,9 @@ void printer (float system[row][row+1])
 }
 
 int main ()
-{
-	float rate[row][row+1] = {
+{	
+	
+	double rate[row][row+1] = {
 		{0, 4, 6, 0, 5, 20},
 		{-2, -2, 0, 4, 4, -10}, 
 		{5, -1, -1, 5, 5, 34}, 
@@ -114,12 +110,12 @@ int main ()
 	};
 
 
-	
 	printer(rate);
 	checkerZero(rate);
 	printer(rate);
-	gaussMethod(rate);
+	beTriangleMatrix(rate);
 	printer(rate);
+	reverseSubs(rate);
 	
 }
 	
