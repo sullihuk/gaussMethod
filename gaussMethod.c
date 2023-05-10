@@ -9,6 +9,7 @@ void checkerZero (float system[row][row+1]);
 void reverseSubs (float system[row][row+1]);
 void printer (float system[row][row+1]);
 float unvar[row]; //Инициализация массива значений искомых переменных.
+float determinant;
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
 {
@@ -129,6 +130,21 @@ void descrepancy(float system[row][row+1])
       printf ("%f ~= %f -- Верно!\n", sum, bVal);
   }
 }
+void determ(float system[row][row+1])
+{
+  for (int i = 0; i<row; i++)
+  {
+      for( int j = 0; j<row; j++)
+      {
+        if (i == j )
+        determinant = system[i][j];
+        printf("%f\n",determinant);
+        determinant *=determinant;
+      }
+  }
+
+
+}
 
 int main ()
 {	
@@ -153,6 +169,8 @@ int main ()
 	reverseSubs(rate);//Метод обратной подстановки и вывод на экран значений соответствующих переменных, решенной системы линейных уравнений 
   printer(rateAu); 
   descrepancy(rateAu);
+  determ(rate);
+  printf("Определитель |A|= %f\n", determinant);
 	
 }
 	
