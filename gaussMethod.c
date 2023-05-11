@@ -111,7 +111,7 @@ void auxilaryRate(float system[row][row+1], float auxilaryRate[row][row+1])
   }
 }
 
-void descrepancy(float system[row][row+1])
+void descrepancy(float system[row][row+1])// Метод вычисляет невязку с точностью до тысячной доли
 {
   float sum;
   bool truFal;
@@ -130,7 +130,7 @@ void descrepancy(float system[row][row+1])
       printf ("%f ~= %f -- Верно!\n", sum, bVal);
   }
 }
-void determ(float system[row][row+1])
+void determ(float system[row][row+1])// Метод вычисляет определитель матрицы методом Гаусса используя уже преобразованную, треугольную матрицу, хотя параметром может быть любая матрица соответствующей размерности
 {
   for (int i = 0; i<row; i++)
   {
@@ -143,9 +143,22 @@ void determ(float system[row][row+1])
       printf("%f\n", multy);
       determinant *= multy;
   }
-
-
 }
+
+void inversematrix (float system[row][row+1])
+{
+  
+  for (int i = 0; i<row; i++)
+  {
+    for( int j = 0; j<row; j++)
+    {
+      if(i>=row/2 && j<row/2)
+      printf("%.2f\t", system[i][j]);
+    }
+    puts("");
+  }
+}
+
 
 int main ()
 {	
@@ -168,10 +181,11 @@ int main ()
 	printer(rate);//Вывод на экран треугольной матрицы 
 	printf("Ответ:\n");
 	reverseSubs(rate);//Метод обратной подстановки и вывод на экран значений соответствующих переменных, решенной системы линейных уравнений 
-  printer(rateAu); 
+  printer(rateAu);// Вывод вспомогательной (первоначальной,т.к. матрица rate уже преобразована в треугольную) матрицы на экран 
   descrepancy(rateAu);
   determ(rate);
   printf("Определитель |A|= %f\n", determinant);
-	
+	inversematrix(rateAu);
+
 }
 	
