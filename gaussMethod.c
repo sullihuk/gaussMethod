@@ -9,7 +9,7 @@ void checkerZero (float system[row][row+1]);
 void reverseSubs (float system[row][row+1]);
 void printer (float system[row][row+1]);
 float unvar[row]; //Инициализация массива значений искомых переменных.
-float determinant;
+float determinant = 1;
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
 {
@@ -134,13 +134,14 @@ void determ(float system[row][row+1])
 {
   for (int i = 0; i<row; i++)
   {
+	float multy;
       for( int j = 0; j<row; j++)
       {
         if (i == j )
-        determinant = system[i][j];
-        printf("%f\n",determinant);
-        determinant *=determinant;
+        multy = system[i][j];
       }
+      printf("%f\n", multy);
+      determinant *= multy;
   }
 
 
