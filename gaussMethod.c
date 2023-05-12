@@ -147,13 +147,20 @@ void determ(float system[row][row+1])// Метод вычисляет опред
 
 void inversematrix (float system[row][row+1])
 {
-  
   for (int i = 0; i<row; i++)
   {
     for( int j = 0; j<row; j++)
     {
+      if(i<row/2 && j<row/2)
+      	printf("%.2f\t|", system[i][j]);
+      if(i<row/2 && j>=row/2)
+      	printf("%.2f\t|", system[i][j]);
       if(i>=row/2 && j<row/2)
-      printf("%.2f\t", system[i][j]);
+      	printf("%.2f\t|", system[i][j]);
+      if(i>=row/2 && j>=row/2)
+      	printf("%.2f\t|", system[i][j]);
+      //if(i==row/2 || j==row/2)
+//	puts("-------------");
     }
     puts("");
   }
