@@ -10,6 +10,8 @@ void reverseSubs (float system[row][row+1]);
 void printer (float system[row][row+1]);
 float unvar[row]; //Инициализация массива значений искомых переменных.
 float determinant = 1;
+float aA[row/2][row/2],bB[row/2][row/2],cC[row/2][row/2],dD[row/2][row/2],kK[row/2][row/2],lL[row/2][row/2],mM[row/2][row/2],nN[row/2][row/2]; //Инициализация клеточных матриц для вычисления обратной матрицы
+float detA;
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
 {
@@ -147,23 +149,23 @@ void determ(float system[row][row+1])// Метод вычисляет опред
 
 void inversematrix (float system[row][row+1])
 {
+  
   for (int i = 0; i<row; i++)
   {
     for( int j = 0; j<row; j++)
     {
       if(i<row/2 && j<row/2)
-      	printf("%.2f\t|", system[i][j]);
-      if(i<row/2 && j>=row/2)
-      	printf("%.2f\t|", system[i][j]);
-      if(i>=row/2 && j<row/2)
-      	printf("%.2f\t|", system[i][j]);
-      if(i>=row/2 && j>=row/2)
-      	printf("%.2f\t|", system[i][j]);
+        detA = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2][row/2-row/2]*system[row/2-row/2][row/2];
+       // aA[i][j] = system[row/2-i][row/2-j]/ detA; 
+      //if(i<row/2 && j>=row/2)
+      //if(i>=row/2 && j<row/2)
+      //if(i>=row/2 && j>=row/2)
       //if(i==row/2 || j==row/2)
 //	puts("-------------");
     }
-    puts("");
   }
+    printf("%.2f\n", detA);
+    printf("%.2f  %.2f\t%.2f\n", system[row/2-row/2][row/2-row/2],system[row/2-1][row/2-1],system[row/2-row/2][row/2-row/2]*system[row/2][row/2]);
 }
 
 
