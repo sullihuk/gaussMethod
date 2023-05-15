@@ -10,7 +10,7 @@ void reverseSubs (float system[row][row+1]);
 void printer (float system[row][row+1]);
 float unvar[row]; //Инициализация массива значений искомых переменных.
 float determinant = 1;
-float aA[row/2][row/2],bB[row/2][row/2],cC[row/2][row/2],dD[row/2][row/2],kK[row/2][row/2],lL[row/2][row/2],mM[row/2][row/2],nN[row/2][row/2]; //Инициализация клеточных матриц для вычисления обратной матрицы
+float invA[row/2][row/2], bB[row/2][row/2], cC[row/2][row/2], dD[row/2][row/2], kK[row/2][row/2], lL[row/2][row/2], mM[row/2][row/2], nN[row/2][row/2]; //Инициализация клеточных матриц для вычисления обратной матрицы
 float detA;
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
@@ -132,7 +132,24 @@ void descrepancy(float system[row][row+1])// Метод вычисляет не�
       printf ("%f ~= %f -- Верно!\n", sum, bVal);
   }
 }
-void determ(float system[row][row+1])// Метод вычисляет определитель матрицы методом Гаусса используя уже преобразованную, треугольную матрицу, хотя параметром может быть любая матрица соответствующей размерности
+
+void printerCage(float matrix [row/2][row/2])//Метод выводит на экран матрицы/четвертинки, например клеточные матрицы
+{
+  for (int i = 0; i < row/2; i++) {
+
+    printf("| ");
+    for (int j = 0; j < row/2; j++) {
+      printf("%.2f\t", matrix[i][j]);
+    }
+    //printf("\r");
+    printf("\b\b|");
+    puts("");
+  }
+  puts("-----------------");
+
+}
+
+void determ(float system[row][row+1])// Метод вычисляет определитель матрицы методом Гаусса используя уже преобразованную, треугольную матрицу, хотя параметром может быть любая матрица соответствующей размерности, но тогда, значение переменной determinant не имеет смысла
 {
   for (int i = 0; i<row; i++)
   {
@@ -147,25 +164,31 @@ void determ(float system[row][row+1])// Метод вычисляет опред
   }
 }
 
-void inversematrix (float system[row][row+1])
+void createsCageMatrices(float system[row][row+1])
 {
   
   for (int i = 0; i<row; i++)
   {
     for( int j = 0; j<row; j++)
     {
-      if(i<row/2 && j<row/2)
-        detA = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2][row/2-row/2]*system[row/2-row/2][row/2];
-       // aA[i][j] = system[row/2-i][row/2-j]/ detA; 
-      //if(i<row/2 && j>=row/2)
-      //if(i>=row/2 && j<row/2)
-      //if(i>=row/2 && j>=row/2)
+      if(i<row/2 && j<row/2) //  При выполнении этого условия вычисляется определитель клеточной матрицы А, не следует путать клеточную матрицу А с первоначальной матрицей
+      {
+        detA = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2-row/2][row/2-1]*system[row/2-1][row/2-row/2];
+        invA[i][j] = system[i][j];
+      }
+      if(i<row/2 &&  j>=row/2){
+        bB[i][j-row/2] = system[i][j];
+      }
+      if(i>=row/2 && j<row/2)
+        cC[i-row/2][j] = system[i][j];
+      if(i>=row/2 && j>=row/2)
+        dD[i-row/2][j-row/2] = system[i][j];
       //if(i==row/2 || j==row/2)
 //	puts("-------------");
+//
     }
   }
     printf("%.2f\n", detA);
-    printf("%.2f  %.2f\t%.2f\n", system[row/2-row/2][row/2-row/2],system[row/2-1][row/2-1],system[row/2-row/2][row/2-row/2]*system[row/2][row/2]);
 }
 
 
@@ -194,7 +217,11 @@ int main ()
   descrepancy(rateAu);
   determ(rate);
   printf("Определитель |A|= %f\n", determinant);
-	inversematrix(rateAu);
+	createsCageMatrices(rateAu);
+  printerCage(invA);
+  printerCage(bB);
+  printerCage(cC);
+  printerCage(dD);
 
 }
 	
