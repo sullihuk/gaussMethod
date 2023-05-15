@@ -174,7 +174,11 @@ void createsCageMatrices(float system[row][row+1])
       if(i<row/2 && j<row/2) //  При выполнении этого условия вычисляется определитель клеточной матрицы А, не следует путать клеточную матрицу А с первоначальной матрицей
       {
         detA = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2-row/2][row/2-1]*system[row/2-1][row/2-row/2];
-        invA[i][j] = system[i][j];
+	if (i == j){//Условие вычисляет обратную матрицу для клеточной матрицы А
+        	invA[i][j] = system[1-i][1-j]/detA;
+	} else {
+		invA[i][j] = (system[i][j]*(-1))/detA;
+	}
       }
       if(i<row/2 &&  j>=row/2){
         bB[i][j-row/2] = system[i][j];
@@ -183,13 +187,12 @@ void createsCageMatrices(float system[row][row+1])
         cC[i-row/2][j] = system[i][j];
       if(i>=row/2 && j>=row/2)
         dD[i-row/2][j-row/2] = system[i][j];
-      //if(i==row/2 || j==row/2)
-//	puts("-------------");
-//
     }
   }
     printf("%.2f\n", detA);
 }
+
+
 
 
 int main ()
@@ -197,7 +200,7 @@ int main ()
 	float rateAu[row][row+1];//Инициализация первоначальной матрицы
 	float rate[row][row+1] = {      // Матрица заданной системы уравнений, предствленная в виде многомерного массива. Вариант 6. 
 		{3.2, 5.4, 4.2, 2.2, 11.4},
-		{2.1, 3.2, 3.1, 1.1, 9.2}, 
+		{2.1, 2.2, 3.1, 1.1, 9.2}, 
 		{1.2, 0.4, -0.8, -0.8, 0.4}, 
 		{4.7, 10.4, 9.7, 9.7, 30.4}, 
 	};
