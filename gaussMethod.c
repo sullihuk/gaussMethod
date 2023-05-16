@@ -10,7 +10,8 @@ void reverseSubs (float system[row][row+1]);
 void printer (float system[row][row+1]);
 float unvar[row]; //Инициализация массива значений искомых переменных.
 float determinant = 1;
-float invA[row/2][row/2], bB[row/2][row/2], cC[row/2][row/2], dD[row/2][row/2], kK[row/2][row/2], lL[row/2][row/2], mM[row/2][row/2], nN[row/2][row/2]; //Инициализация клеточных матриц для вычисления обратной матрицы
+float substMat[row/2][row/2], invA[row/2][row/2], bB[row/2][row/2], cC[row/2][row/2], dD[row/2][row/2], kK[row/2][row/2], lL[row/2][row/2], mM[row/2][row/2], nN[row/2][row/2], multyMat[row/2][row/2], aB[row/2][row/2],cA[row/2][row/2], cAB[row/2][row/2]; //Инициализация вспомогательных матриц для вычисления обратной матрицы
+float detMat;
 float detA;
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
@@ -43,8 +44,6 @@ void checkerZero (float system[row][row+1]) // Метод избавляется
 void beTriangleMatrix (float system[row][row+1]) //Метод получает на вход матрицу и преобразует ее к т.н. треугольному (сверху) виду
 {
 	float chval; // Инициализация переменной для замены частного коэффициентов. 
-	//size_t i,j,k; //Инициализация переменных-счетчиков: количество строк, столбцов расширенной матрицы, количество шагов исключения переменных соответственно.
-
 
 	for (int k=0; k<row; k++)// Цикл назначает номер шага исключения переменной
 	{
@@ -123,7 +122,7 @@ void descrepancy(float system[row][row+1])// Метод вычисляет не�
     sum = 0;
 		for(int j=0; j<row; j++) // Цикл пробегает по коэффициентам каждого уравнения, кроме свободного члена b
 		{
-      sum += system[i][j]*unvar[j];
+      sum += system[i][j]*unvar[j];//Собственно, вычисление невязки
       if (sum - system[i][j+1] <= 0.001)
         truFal = true;
       bVal = system[i][j+1];
@@ -141,7 +140,6 @@ void printerCage(float matrix [row/2][row/2])//Метод выводит на э
     for (int j = 0; j < row/2; j++) {
       printf("%.2f\t", matrix[i][j]);
     }
-    //printf("\r");
     printf("\b\b|");
     puts("");
   }
@@ -164,6 +162,29 @@ void determ(float system[row][row+1])// Метод вычисляет опред
   }
 }
 
+void inverseCageMatrix (float system[row/2][row/2]) //Метод вычисляет обратные матрицыдля клеточных матриц. Очевидно, что метод должен выполнятся после вычисления определителя соотвествующей матрицы
+{
+  printf("Обратная клеточная матрица\n");
+  for (int i = 0; i<row/2; i++)
+  {
+    for( int j = 0; j<row/2; j++)
+    {
+      if (i == j){//Условие вычисляет обратную матрицу для клеточной матрицы 
+        system[i][j] = system[i][j]/detMat;
+      } else {
+        system[i][j] = (system[i][j]*(-1))/detMat;
+	    }
+    }
+  }
+}
+
+void determinantCageMatrix (float system[row/2][row/2])
+{
+      detMat = 0;
+      detMat = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2-1][row/2-row/2]*system[row/2-row/2][row/2-1];
+    
+}
+
 void createsCageMatrices(float system[row][row+1])
 {
   
@@ -171,28 +192,83 @@ void createsCageMatrices(float system[row][row+1])
   {
     for( int j = 0; j<row; j++)
     {
-      if(i<row/2 && j<row/2) //  При выполнении этого условия вычисляется определитель клеточной матрицы А, не следует путать клеточную матрицу А с первоначальной матрицей
-      {
-        detA = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2-row/2][row/2-1]*system[row/2-1][row/2-row/2];
-	if (i == j){//Условие вычисляет обратную матрицу для клеточной матрицы А
-        	invA[i][j] = system[1-i][1-j]/detA;
-	} else {
-		invA[i][j] = (system[i][j]*(-1))/detA;
-	}
-      }
-      if(i<row/2 &&  j>=row/2){
+      if(i<row/2 && j<row/2) // Создание клеточной матрицы А
+        invA[i][j] = system[i][j];
+      
+      if(i<row/2 &&  j>=row/2)// Создание клеточной матрицы B
         bB[i][j-row/2] = system[i][j];
-      }
-      if(i>=row/2 && j<row/2)
+      
+      if(i>=row/2 && j<row/2)// Создание клеточной матрицы C
         cC[i-row/2][j] = system[i][j];
-      if(i>=row/2 && j>=row/2)
+
+      if(i>=row/2 && j>=row/2)// Создание клеточной матрицы D
         dD[i-row/2][j-row/2] = system[i][j];
     }
   }
-    printf("%.2f\n", detA);
 }
 
+void multiplicationMatrix (float system[row/2][row/2], float system2[row/2][row/2])
+{
+  for (int i = 0; i<row/2; i++)
+  {
+    for(int j = 0; j<row/2; j++)
+    {
+      multyMat[i][j] = 0;
+      for(int k = 0; k<row/2; k++)
+      {
+        multyMat[i][j] = multyMat[i][j] + system[i][k]*system2[k][j];
+      }
+    }
+  }
+}
 
+void substractionMat (float system[row/2][row/2], float system2[row/2][row/2])
+{
+  for (int i = 0; i<row/2; i++)
+  {
+    for(int j = 0; j<row/2; j++)
+    {
+      substMat[i][j] = system[i][j] + system2[i][j]*(-1);
+    }
+  }
+}
+
+void changeSign (float system[row/2][row/2])
+{
+  for (int i = 0; i<row/2; i++)
+  {
+    for(int j = 0; j<row/2; j++)
+    {
+      system[i][j] = system[i][j]*(-1);
+    }
+  }
+}
+
+void assingmentValuesMat(float system[row/2][row/2], float system2[row/2][row/2])
+{
+  for (int i = 0; i<row/2; i++)
+  {
+    for(int j = 0; j<row/2; j++)
+    {
+      system[i][j] = system2[i][j];
+    }
+  }
+}
+
+void printerInverse(float k[row/2][row/2], float l[row/2][row/2], float m[row/2][row/2], float n[row/2][row/2])//Метод выводит на экран искомую обратную матрицу составленную из клеточных матриц
+{
+  float s[row][row];
+  
+  for (int i = 0; i < row; i++) {
+    printf("| ");
+    for (int j = 0; j < row; j++) {
+      
+    }
+    printf("\b\b|");
+    puts("");
+  }
+  puts("-----------------");
+}
 
 
 int main ()
@@ -200,7 +276,7 @@ int main ()
 	float rateAu[row][row+1];//Инициализация первоначальной матрицы
 	float rate[row][row+1] = {      // Матрица заданной системы уравнений, предствленная в виде многомерного массива. Вариант 6. 
 		{3.2, 5.4, 4.2, 2.2, 11.4},
-		{2.1, 2.2, 3.1, 1.1, 9.2}, 
+		{2.1, 3.2, 3.1, 1.1, 9.2}, 
 		{1.2, 0.4, -0.8, -0.8, 0.4}, 
 		{4.7, 10.4, 9.7, 9.7, 30.4}, 
 	};
@@ -217,14 +293,54 @@ int main ()
 	printf("Ответ:\n");
 	reverseSubs(rate);//Метод обратной подстановки и вывод на экран значений соответствующих переменных, решенной системы линейных уравнений 
   printer(rateAu);// Вывод вспомогательной (первоначальной,т.к. матрица rate уже преобразована в треугольную) матрицы на экран 
-  descrepancy(rateAu);
-  determ(rate);
-  printf("Определитель |A|= %f\n", determinant);
-	createsCageMatrices(rateAu);
-  printerCage(invA);
-  printerCage(bB);
-  printerCage(cC);
-  printerCage(dD);
+  descrepancy(rateAu);//Вызов метода вычисляющего невязку. Проверка.
+  determ(rate);//Вычисление определителя методом Гаусса.
+  printf("Определитель |A|= %f\n", determinant);// Вывод на экран значения определителя для заданной матрицы
+	createsCageMatrices(rateAu);//Вызов метода для создания клеточных матриц
+  determinantCageMatrix(invA);// Вызов метода для вычисления определителя клеточной матрицы А
+  printerCage(invA);//Вызов методов для вывода клеточных матриц на экран
+  printerCage(bB);//              --//--
+  printerCage(cC);//              --//--
+  printerCage(dD);//              --//--
+  inverseCageMatrix (invA);//Вызов метода для обращения клеточной матрицы А
+  printerCage(invA);// Вывод обратной клеточной матрицы на экран
 
+  multiplicationMatrix(invA, bB); 
+  assingmentValuesMat(aB, multyMat);
+  printerCage(aB);
+
+  multiplicationMatrix(cC, invA); 
+  assingmentValuesMat(cA, multyMat);
+  printerCage(cA);
+
+  multiplicationMatrix(cA, bB); 
+  assingmentValuesMat(cAB, multyMat);
+  printerCage(cAB);
+
+  substractionMat(dD, cAB);
+  assingmentValuesMat(nN, substMat);
+  determinantCageMatrix(nN);
+  inverseCageMatrix (nN);
+  printerCage(nN);
+  
+  multiplicationMatrix(nN, cA); 
+  assingmentValuesMat(mM, multyMat);
+  changeSign(mM);
+  printerCage(mM);
+
+  changeSign(invA);
+  multiplicationMatrix(invA, bB); 
+  assingmentValuesMat(lL, multyMat);
+  multiplicationMatrix(lL, nN); 
+  assingmentValuesMat(lL, multyMat);
+  printerCage(lL);
+
+  multiplicationMatrix(invA, bB); 
+  assingmentValuesMat(kK, multyMat);
+  substractionMat(invA, kK);
+  assingmentValuesMat(kK, substMat);
+  printerCage(kK);
+
+  printerInverse(kK, lL, mM, nN);
 }
 	
