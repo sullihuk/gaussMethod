@@ -13,6 +13,7 @@ float determinant = 1;
 float substMat[row/2][row/2], invA[row/2][row/2], bB[row/2][row/2], cC[row/2][row/2], dD[row/2][row/2], kK[row/2][row/2], lL[row/2][row/2], mM[row/2][row/2], nN[row/2][row/2], multyMat[row/2][row/2], aB[row/2][row/2],cA[row/2][row/2], cAB[row/2][row/2]; //Инициализация вспомогательных матриц для вычисления обратной матрицы
 float detMat;
 float detA;
+float sMatrix[row][row];
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
 {
@@ -125,10 +126,10 @@ void descrepancy(float system[row][row+1])// Метод вычисляет не�
       sum += system[i][j]*unvar[j];//Собственно, вычисление невязки
       if (sum - system[i][j+1] <= 0.001)
         truFal = true;
-      bVal = system[i][j+1];
+      bVal = system[i][j+1];//Переменной присваивается значение свободного члена
     }
    if (truFal == true) 
-      printf ("%f ~= %f -- Верно!\n", sum, bVal);
+      printf ("%f ~= %f -- Верно!\n", sum, bVal);//Если правые и левые части уравнения отличаются на одну тысячную или менее выводится сообщение о верности решения
   }
 }
 
@@ -216,7 +217,7 @@ void multiplicationMatrix (float system[row/2][row/2], float system2[row/2][row/
       multyMat[i][j] = 0;
       for(int k = 0; k<row/2; k++)
       {
-        multyMat[i][j] = multyMat[i][j] + system[i][k]*system2[k][j];
+        multyMat[i][j] =multyMat[i][j]+system[i][k]*system2[k][j];
       }
     }
   }
@@ -244,7 +245,7 @@ void changeSign (float system[row/2][row/2])
   }
 }
 
-void assingmentValuesMat(float system[row/2][row/2], float system2[row/2][row/2])
+void assingmentValuesMat(float system[row/2][row/2], float system2[row/2][row/2])//Метод присваивает значения элементам одной матрицы элементам второй. Необходим для промежуточных вычислений
 {
   for (int i = 0; i<row/2; i++)
   {
@@ -255,19 +256,25 @@ void assingmentValuesMat(float system[row/2][row/2], float system2[row/2][row/2]
   }
 }
 
-void printerInverse(float k[row/2][row/2], float l[row/2][row/2], float m[row/2][row/2], float n[row/2][row/2])//Метод выводит на экран искомую обратную матрицу составленную из клеточных матриц
+void printerInverse(float k[row/2][row/2], float l[row/2][row/2], float m[row/2][row/2], float n[row/2][row/2])//Метод выводит на экран искомую обратную матрицу составленную из клеточных матриц. Параметрами метода являются какие-либо клеточные матрицы, размер которых, равен половине исходной матрицы
 {
-  float s[row][row];
-  
-  for (int i = 0; i < row; i++) {
-    printf("| ");
-    for (int j = 0; j < row; j++) {
-      
+  for(int i=0; i<row; i++)
+  {
+    for(int j=0; j<row; j++)
+    {
+      if(i<row/2 && j<row/2)
+        sMatrix[i][j] = k[i][j];
+      else if (i<row/2 && j>=row/2)
+        sMatrix[i][j] = l[i][j-row/2];
+      else if (i>=row/2 && j<row/2)
+        sMatrix[i][j] = m[i-row/2][j];
+      else if (i>=row/2 && j>=row/2)
+        sMatrix[i][j] = n[i-row/2][j-row/2];
+
+        printf("%.2f\t", sMatrix[i][j]);
     }
-    printf("\b\b|");
     puts("");
   }
-  puts("-----------------");
 }
 
 
@@ -302,6 +309,7 @@ int main ()
   printerCage(bB);//              --//--
   printerCage(cC);//              --//--
   printerCage(dD);//              --//--
+
   inverseCageMatrix (invA);//Вызов метода для обращения клеточной матрицы А
   printerCage(invA);// Вывод обратной клеточной матрицы на экран
 
