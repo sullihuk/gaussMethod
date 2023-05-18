@@ -10,9 +10,6 @@ void reverseSubs (float system[row][row+1]);
 void printer (float system[row][row+1]);
 float unvar[row]; //Инициализация массива значений искомых переменных.
 float determinant = 1;
-float substMat[row/2][row/2], invA[row/2][row/2], bB[row/2][row/2], cC[row/2][row/2], dD[row/2][row/2], kK[row/2][row/2], lL[row/2][row/2], mM[row/2][row/2], nN[row/2][row/2], multyMat[row/2][row/2], aB[row/2][row/2],cA[row/2][row/2], cAB[row/2][row/2]; //Инициализация вспомогательных матриц для вычисления обратной матрицы
-float detMat;
-float detA;
 float sMatrix[row][row];
 
 void checkerZero (float system[row][row+1]) // Метод избавляется от нулей на осевых элементах
@@ -48,16 +45,12 @@ void beTriangleMatrix (float system[row][row+1]) //Метод получает �
 
 	for (int k=0; k<row; k++)// Цикл назначает номер шага исключения переменной
 	{
-
 		for (int i=k+1; i<row; i++)// Цикл пробегает по всем уравнениям системы, при том, что номер уравнения системы равен номеру шага исключения увеличенного на единицу, т.е. следующего
-
 		{	
-		
 			float chval = system[i][k]/system[k][k];//Вспомогательная переменная назначается как результат деления коэффициента следующего уравнения на соответсвующий коэффициент текущего уравнения 
 			for (int j=k+1; j<=row; j++)// Цикл пробегает по всем коэффициентам текущего уравнения(строки)
 				system[i][j] -= system[k][j]*chval;// Каждый последующий коэффициент уравнения равен разнице между соответствующим коэффициентом на предыдущим шаге и коэффициентом на текущем шаге помноженным на вспомогательную переменную значение которой описано при ее назначении см. соответствующий комментарий
-		
-			system[i][k]=0;// Коэффициенты не учавствующие в последующем расчете приравниваются к нулю
+			  system[i][k]=0;// Коэффициенты не учавствующие в последующем расчете приравниваются к нулю
 		}
 	}
 }
@@ -133,20 +126,6 @@ void descrepancy(float system[row][row+1])// Метод вычисляет не�
   }
 }
 
-void printerCage(float matrix [row/2][row/2])//Метод выводит на экран матрицы/четвертинки, например клеточные матрицы
-{
-  for (int i = 0; i < row/2; i++) {
-
-    printf("| ");
-    for (int j = 0; j < row/2; j++) {
-      printf("%.2f\t", matrix[i][j]);
-    }
-    printf("\b\b|");
-    puts("");
-  }
-  puts("-----------------");
-
-}
 
 void determ(float system[row][row+1])// Метод вычисляет определитель матрицы методом Гаусса используя уже преобразованную, треугольную матрицу, хотя параметром может быть любая матрица соответствующей размерности, но тогда, значение переменной determinant не имеет смысла
 {
@@ -158,124 +137,11 @@ void determ(float system[row][row+1])// Метод вычисляет опред
         if (i == j )
         multy = system[i][j];
       }
-      printf("%f\n", multy);
+      //printf("%f\n", multy);
       determinant *= multy;
   }
 }
 
-void inverseCageMatrix (float system[row/2][row/2]) //Метод вычисляет обратные матрицыдля клеточных матриц. Очевидно, что метод должен выполнятся после вычисления определителя соотвествующей матрицы
-{
-  printf("Обратная клеточная матрица\n");
-  for (int i = 0; i<row/2; i++)
-  {
-    for( int j = 0; j<row/2; j++)
-    {
-      if (i == j){//Условие вычисляет обратную матрицу для клеточной матрицы 
-        system[i][j] = system[i][j]/detMat;
-      } else {
-        system[i][j] = (system[i][j]*(-1))/detMat;
-	    }
-    }
-  }
-}
-
-void determinantCageMatrix (float system[row/2][row/2])
-{
-      detMat = 0;
-      detMat = system[row/2-row/2][row/2-row/2]*system[row/2-1][row/2-1] - system[row/2-1][row/2-row/2]*system[row/2-row/2][row/2-1];
-    
-}
-
-void createsCageMatrices(float system[row][row+1])
-{
-  
-  for (int i = 0; i<row; i++)
-  {
-    for( int j = 0; j<row; j++)
-    {
-      if(i<row/2 && j<row/2) // Создание клеточной матрицы А
-        invA[i][j] = system[i][j];
-      
-      if(i<row/2 &&  j>=row/2)// Создание клеточной матрицы B
-        bB[i][j-row/2] = system[i][j];
-      
-      if(i>=row/2 && j<row/2)// Создание клеточной матрицы C
-        cC[i-row/2][j] = system[i][j];
-
-      if(i>=row/2 && j>=row/2)// Создание клеточной матрицы D
-        dD[i-row/2][j-row/2] = system[i][j];
-    }
-  }
-}
-
-void multiplicationMatrix (float system[row/2][row/2], float system2[row/2][row/2])
-{
-  for (int i = 0; i<row/2; i++)
-  {
-    for(int j = 0; j<row/2; j++)
-    {
-      multyMat[i][j] = 0;
-      for(int k = 0; k<row/2; k++)
-      {
-        multyMat[i][j] =multyMat[i][j]+system[i][k]*system2[k][j];
-      }
-    }
-  }
-}
-
-void substractionMat (float system[row/2][row/2], float system2[row/2][row/2])
-{
-  for (int i = 0; i<row/2; i++)
-  {
-    for(int j = 0; j<row/2; j++)
-    {
-      substMat[i][j] = system[i][j] + system2[i][j]*(-1);
-    }
-  }
-}
-
-void changeSign (float system[row/2][row/2])
-{
-  for (int i = 0; i<row/2; i++)
-  {
-    for(int j = 0; j<row/2; j++)
-    {
-      system[i][j] = system[i][j]*(-1);
-    }
-  }
-}
-
-void assingmentValuesMat(float system[row/2][row/2], float system2[row/2][row/2])//Метод присваивает значения элементам одной матрицы элементам второй. Необходим для промежуточных вычислений
-{
-  for (int i = 0; i<row/2; i++)
-  {
-    for(int j = 0; j<row/2; j++)
-    {
-      system[i][j] = system2[i][j];
-    }
-  }
-}
-
-void printerInverse(float k[row/2][row/2], float l[row/2][row/2], float m[row/2][row/2], float n[row/2][row/2])//Метод выводит на экран искомую обратную матрицу составленную из клеточных матриц. Параметрами метода являются какие-либо клеточные матрицы, размер которых, равен половине исходной матрицы
-{
-  for(int i=0; i<row; i++)
-  {
-    for(int j=0; j<row; j++)
-    {
-      if(i<row/2 && j<row/2)
-        sMatrix[i][j] = k[i][j];
-      else if (i<row/2 && j>=row/2)
-        sMatrix[i][j] = l[i][j-row/2];
-      else if (i>=row/2 && j<row/2)
-        sMatrix[i][j] = m[i-row/2][j];
-      else if (i>=row/2 && j>=row/2)
-        sMatrix[i][j] = n[i-row/2][j-row/2];
-
-        printf("%.2f\t", sMatrix[i][j]);
-    }
-    puts("");
-  }
-}
 
 
 int main ()
@@ -285,7 +151,7 @@ int main ()
 		{3.2, 5.4, 4.2, 2.2, 11.4},
 		{2.1, 3.2, 3.1, 1.1, 9.2}, 
 		{1.2, 0.4, -0.8, -0.8, 0.4}, 
-		{4.7, 10.4, 9.7, 9.7, 30.4}, 
+		{4.7, 10.4, 9.7, 9.7, 30.4} 
 	};
 
   auxilaryRate(rate, rateAu);//Вызов метода для сохранения первоначальной матрицы
@@ -303,52 +169,7 @@ int main ()
   descrepancy(rateAu);//Вызов метода вычисляющего невязку. Проверка.
   determ(rate);//Вычисление определителя методом Гаусса.
   printf("Определитель |A|= %f\n", determinant);// Вывод на экран значения определителя для заданной матрицы
-	createsCageMatrices(rateAu);//Вызов метода для создания клеточных матриц
-  determinantCageMatrix(invA);// Вызов метода для вычисления определителя клеточной матрицы А
-  printerCage(invA);//Вызов методов для вывода клеточных матриц на экран
-  printerCage(bB);//              --//--
-  printerCage(cC);//              --//--
-  printerCage(dD);//              --//--
 
-  inverseCageMatrix (invA);//Вызов метода для обращения клеточной матрицы А
-  printerCage(invA);// Вывод обратной клеточной матрицы на экран
-
-  multiplicationMatrix(invA, bB); 
-  assingmentValuesMat(aB, multyMat);
-  printerCage(aB);
-
-  multiplicationMatrix(cC, invA); 
-  assingmentValuesMat(cA, multyMat);
-  printerCage(cA);
-
-  multiplicationMatrix(cA, bB); 
-  assingmentValuesMat(cAB, multyMat);
-  printerCage(cAB);
-
-  substractionMat(dD, cAB);
-  assingmentValuesMat(nN, substMat);
-  determinantCageMatrix(nN);
-  inverseCageMatrix (nN);
-  printerCage(nN);
-  
-  multiplicationMatrix(nN, cA); 
-  assingmentValuesMat(mM, multyMat);
-  changeSign(mM);
-  printerCage(mM);
-
-  changeSign(invA);
-  multiplicationMatrix(invA, bB); 
-  assingmentValuesMat(lL, multyMat);
-  multiplicationMatrix(lL, nN); 
-  assingmentValuesMat(lL, multyMat);
-  printerCage(lL);
-
-  multiplicationMatrix(invA, bB); 
-  assingmentValuesMat(kK, multyMat);
-  substractionMat(invA, kK);
-  assingmentValuesMat(kK, substMat);
-  printerCage(kK);
-
-  printerInverse(kK, lL, mM, nN);
+  //printerInverse();
 }
 	
